@@ -4,14 +4,20 @@
 
 ### Cost-sensitive machine learning for truck failure root-cause triage
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-Extra%20Trees-F7931E?logo=scikitlearn&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-Deployed-FF4B4B?logo=streamlit&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Complete-2E8B57)
+<p>
+  <img src="https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/scikit--learn-Extra%20Trees-F7931E?logo=scikitlearn&logoColor=white" alt="scikit-learn">
+  <img src="https://img.shields.io/badge/Streamlit-Deployed-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
+  <img src="https://img.shields.io/badge/Status-Complete-2E8B57" alt="Status">
+</p>
 
+<p>
 A complete machine-learning system for identifying whether an already-failed Scania truck requires Air Pressure System inspection or investigation of another subsystem.
+</p>
 
-**[Open the deployed application](https://aps-failure-classifier.streamlit.app/)**
+<a href="https://aps-failure-classifier.streamlit.app/">
+  <img src="https://img.shields.io/badge/LAUNCH%20LIVE%20APPLICATION-APS%20FAILURE%20CLASSIFIER-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Launch APS Failure Classifier">
+</a>
 
 </div>
 
@@ -23,10 +29,28 @@ This project addresses a cost-sensitive diagnostic classification problem using 
 
 Every record represents a truck that has already experienced a component failure. The objective is to determine whether the root cause is associated with the Air Pressure System, or APS, rather than another subsystem.
 
-| Label | Operational meaning |
-|---|---|
-| `pos` | Failure attributable to the Air Pressure System |
-| `neg` | Failure attributable to another system |
+<div align="center">
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">Label</th>
+      <th align="center">Operational Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><code>pos</code></td>
+      <td align="center">Failure attributable to the Air Pressure System</td>
+    </tr>
+    <tr>
+      <td align="center"><code>neg</code></td>
+      <td align="center">Failure attributable to another system</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
 
 > `neg` does not represent a healthy truck. It represents a failed truck whose root cause is not the APS.
 
@@ -38,18 +62,39 @@ The solution was developed for **DataDive GDGoC 2026** and includes exploratory 
 
 The two classification errors have substantially different operational consequences.
 
-| Error | Operational consequence | Cost |
-|---|---|---:|
-| False positive | A non-APS failure is sent for unnecessary APS inspection | 10 |
-| False negative | A true APS failure is missed | 500 |
+<div align="center">
 
-The evaluation objective is therefore:
+<table>
+  <thead>
+    <tr>
+      <th align="center">Error</th>
+      <th align="center">Operational Consequence</th>
+      <th align="center">Cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">False Positive</td>
+      <td align="center">A non-APS failure is sent for unnecessary APS inspection</td>
+      <td align="center">10</td>
+    </tr>
+    <tr>
+      <td align="center">False Negative</td>
+      <td align="center">A true APS failure is missed</td>
+      <td align="center">500</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+The evaluation objective is:
 
 \[
 \text{Total Cost} = 10 \times FP + 500 \times FN
 \]
 
-A false negative costs fifty times more than a false positive. The model is consequently optimized to identify as many APS failures as possible while controlling the number of unnecessary APS alerts.
+A false negative costs fifty times more than a false positive. The model is therefore optimized to identify as many APS failures as possible while controlling the number of unnecessary APS alerts.
 
 This cost structure makes conventional accuracy unsuitable as the primary success measure. The project emphasizes asymmetric cost, positive-class recall, precision, F1-score, PR-AUC, ROC-AUC, and confusion-matrix outcomes.
 
@@ -57,16 +102,28 @@ This cost structure makes conventional accuracy unsuitable as the primary succes
 
 ## Dataset Summary
 
-| Property | Value |
-|---|---:|
-| Training observations | 60,000 |
-| Test observations | 16,000 |
-| Input features | 170 |
-| Positive training cases | 1,000 |
-| Positive-class prevalence | 1.67% |
-| Task | Binary classification |
-| Feature type | Anonymized numerical counters and binned measurements |
-| Missing data | Present across multiple variables |
+<div align="center">
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">Property</th>
+      <th align="center">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td align="center">Training Observations</td><td align="center">60,000</td></tr>
+    <tr><td align="center">Test Observations</td><td align="center">16,000</td></tr>
+    <tr><td align="center">Input Features</td><td align="center">170</td></tr>
+    <tr><td align="center">Positive Training Cases</td><td align="center">1,000</td></tr>
+    <tr><td align="center">Positive-Class Prevalence</td><td align="center">1.67%</td></tr>
+    <tr><td align="center">Task</td><td align="center">Binary Classification</td></tr>
+    <tr><td align="center">Feature Type</td><td align="center">Anonymized numerical counters and binned measurements</td></tr>
+    <tr><td align="center">Missing Data</td><td align="center">Present across multiple variables</td></tr>
+  </tbody>
+</table>
+
+</div>
 
 The dataset presents three major analytical challenges:
 
@@ -85,7 +142,7 @@ The raw training and test files are intentionally excluded from the repository.
 
 ## Analytical Workflow
 
-### 1. Data quality assessment
+### 1. Data Quality Assessment
 
 The notebook evaluates:
 
@@ -98,7 +155,7 @@ The notebook evaluates:
 - Train-test schema consistency
 - Descriptive distribution drift
 
-### 2. Feature engineering
+### 2. Feature Engineering
 
 The final preprocessing strategy uses:
 
@@ -109,17 +166,17 @@ The final preprocessing strategy uses:
 
 This design allows the model to learn from both recorded values and measurement-availability patterns.
 
-### 3. Imbalance handling
+### 3. Imbalance Handling
 
 The final classifier uses balanced class weighting so that rare APS-positive observations receive greater influence during training.
 
-### 4. Validation protocol
+### 4. Validation Protocol
 
 Model selection and decision-threshold optimization were performed using a stratified training-validation split.
 
 Test features were used only for schema and descriptive compatibility checks. Test labels were reserved for final evaluation and were not used for feature engineering, model selection, hyperparameter selection, or threshold optimization.
 
-### 5. Threshold optimization
+### 5. Threshold Optimization
 
 The default probability threshold of 0.50 was not assumed to be optimal.
 
@@ -160,26 +217,62 @@ The serialized artifact stores:
 
 The final model was evaluated on 16,000 test observations after the preprocessing strategy, classifier, and threshold had been fixed.
 
-| Metric | Result |
-|---|---:|
-| Threshold | 0.1429 |
-| True negatives | 15,258 |
-| False positives | 367 |
-| False negatives | 19 |
-| True positives | 356 |
-| Recall | 94.93% |
-| Precision | 49.24% |
-| F1-score | 0.648 |
-| PR-AUC | 0.882 |
-| ROC-AUC | 0.994 |
-| Total cost | 13,170 |
+<div align="center">
 
-### Operational cost comparison
+<table>
+  <thead>
+    <tr>
+      <th align="center">Metric</th>
+      <th align="center">Result</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td align="center">Threshold</td><td align="center">0.1429</td></tr>
+    <tr><td align="center">True Negatives</td><td align="center">15,258</td></tr>
+    <tr><td align="center">False Positives</td><td align="center">367</td></tr>
+    <tr><td align="center">False Negatives</td><td align="center">19</td></tr>
+    <tr><td align="center">True Positives</td><td align="center">356</td></tr>
+    <tr><td align="center">Recall</td><td align="center">94.93%</td></tr>
+    <tr><td align="center">Precision</td><td align="center">49.24%</td></tr>
+    <tr><td align="center">F1-Score</td><td align="center">0.648</td></tr>
+    <tr><td align="center">PR-AUC</td><td align="center">0.882</td></tr>
+    <tr><td align="center">ROC-AUC</td><td align="center">0.994</td></tr>
+    <tr><td align="center">Total Cost</td><td align="center">13,170</td></tr>
+  </tbody>
+</table>
 
-| Decision policy | False positives | False negatives | Total cost |
-|---|---:|---:|---:|
-| Always predict non-APS | 0 | 375 | 187,500 |
-| Optimized Extra Trees model | 367 | 19 | 13,170 |
+</div>
+
+### Operational Cost Comparison
+
+<div align="center">
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">Decision Policy</th>
+      <th align="center">False Positives</th>
+      <th align="center">False Negatives</th>
+      <th align="center">Total Cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">Always Predict Non-APS</td>
+      <td align="center">0</td>
+      <td align="center">375</td>
+      <td align="center">187,500</td>
+    </tr>
+    <tr>
+      <td align="center">Optimized Extra Trees Model</td>
+      <td align="center">367</td>
+      <td align="center">19</td>
+      <td align="center">13,170</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
 
 The optimized model reduced the published asymmetric cost by approximately **93.0%** while detecting 356 of 375 APS failures.
 
@@ -305,30 +398,42 @@ APS-Failure-Classifier/
     `-- feature_importance.csv
 ```
 
-| File | Purpose |
-|---|---|
-| `aps_failure_eda_model.ipynb` | Complete exploratory analysis, modelling, threshold selection, evaluation, and business interpretation |
-| `APS_failure_one_page_summary.pdf` | One-page competition summary |
-| `streamlit_app.py` | Streamlit interface and results dashboard |
-| `app_logic.py` | Reusable validation and inference logic |
-| `test_app_logic.py` | Unit tests and Streamlit AppTest coverage |
-| `requirements.txt` | Deployment dependencies |
-| `outputs/aps_failure_model.joblib` | Serialized preprocessing and model package |
-| `outputs/model_metrics.csv` | Final performance and cost metrics |
-| `outputs/feature_importance.csv` | Ranked feature importance |
+<div align="center">
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">File</th>
+      <th align="center">Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td align="center"><code>aps_failure_eda_model.ipynb</code></td><td align="center">Complete exploratory analysis, modelling, threshold selection, evaluation, and business interpretation</td></tr>
+    <tr><td align="center"><code>APS_failure_one_page_summary.pdf</code></td><td align="center">One-page competition summary</td></tr>
+    <tr><td align="center"><code>streamlit_app.py</code></td><td align="center">Streamlit interface and results dashboard</td></tr>
+    <tr><td align="center"><code>app_logic.py</code></td><td align="center">Reusable validation and inference logic</td></tr>
+    <tr><td align="center"><code>test_app_logic.py</code></td><td align="center">Unit tests and Streamlit AppTest coverage</td></tr>
+    <tr><td align="center"><code>requirements.txt</code></td><td align="center">Deployment dependencies</td></tr>
+    <tr><td align="center"><code>outputs/aps_failure_model.joblib</code></td><td align="center">Serialized preprocessing and model package</td></tr>
+    <tr><td align="center"><code>outputs/model_metrics.csv</code></td><td align="center">Final performance and cost metrics</td></tr>
+    <tr><td align="center"><code>outputs/feature_importance.csv</code></td><td align="center">Ranked feature importance</td></tr>
+  </tbody>
+</table>
+
+</div>
 
 ---
 
 ## Local Installation
 
-### Clone the repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/minahilahsanawan/APS-Failure-Classifier.git
 cd APS-Failure-Classifier
 ```
 
-### Create a virtual environment
+### Create a Virtual Environment
 
 #### Windows PowerShell
 
@@ -344,14 +449,14 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### Install dependencies
+### Install Dependencies
 
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-### Start the application
+### Start the Application
 
 ```bash
 python -m streamlit run streamlit_app.py
@@ -408,22 +513,22 @@ Reproducible inference is supported through:
 
 ## Limitations
 
-1. **Anonymized features**  
+1. **Anonymized Features**  
    The variables cannot be connected reliably to specific physical components.
 
-2. **No truck identifiers**  
+2. **No Truck Identifiers**  
    Repeated-truck leakage and entity-level validation cannot be assessed.
 
-3. **No timestamps**  
+3. **No Timestamps**  
    Temporal stability and future-data performance cannot be evaluated directly.
 
-4. **Proxy cost assumptions**  
+4. **Proxy Cost Assumptions**  
    The published error costs should be replaced with real inspection, downtime, towing, and repair costs before operational use.
 
-5. **Dependence on missingness patterns**  
+5. **Dependence on Missingness Patterns**  
    Changes in data-collection procedures may alter model performance.
 
-6. **Prospective validation requirement**  
+6. **Prospective Validation Requirement**  
    The model should be validated on later operational data before integration into a service-center workflow.
 
 ---
@@ -438,18 +543,30 @@ Predictions should be interpreted alongside operational records and established 
 
 ## Technology Stack
 
-| Component | Technology |
-|---|---|
-| Language | Python |
-| Data processing | pandas, NumPy |
-| Machine learning | scikit-learn |
-| Classifier | Extra Trees |
-| Model serialization | joblib |
-| Visualization | Altair |
-| Application | Streamlit |
-| Testing | unittest, Streamlit AppTest |
-| Deployment | Streamlit Community Cloud |
-| Version control | Git and GitHub |
+<div align="center">
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">Component</th>
+      <th align="center">Technology</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td align="center">Language</td><td align="center">Python</td></tr>
+    <tr><td align="center">Data Processing</td><td align="center">pandas, NumPy</td></tr>
+    <tr><td align="center">Machine Learning</td><td align="center">scikit-learn</td></tr>
+    <tr><td align="center">Classifier</td><td align="center">Extra Trees</td></tr>
+    <tr><td align="center">Model Serialization</td><td align="center">joblib</td></tr>
+    <tr><td align="center">Visualization</td><td align="center">Altair</td></tr>
+    <tr><td align="center">Application</td><td align="center">Streamlit</td></tr>
+    <tr><td align="center">Testing</td><td align="center">unittest, Streamlit AppTest</td></tr>
+    <tr><td align="center">Deployment</td><td align="center">Streamlit Community Cloud</td></tr>
+    <tr><td align="center">Version Control</td><td align="center">Git and GitHub</td></tr>
+  </tbody>
+</table>
+
+</div>
 
 ---
 
@@ -465,7 +582,7 @@ Predictions should be interpreted alongside operational records and established 
 
 ## Acknowledgements
 
-This project was developed for **DataDive GDGoC 2026** using the Scania APS Failure dataset.
+This project was developed for **DataDive GDGoC'26** using the Scania APS Failure dataset.
 
 It is an independent analytical project and is not an official Scania product or diagnostic system.
 

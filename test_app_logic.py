@@ -12,6 +12,8 @@ from streamlit.testing.v1 import AppTest
 
 from app_logic import (
     InputValidationError,
+    calculate_binary_cost,
+    calculate_cost_reduction,
     create_empty_template,
     identify_metric_rows,
     load_metrics,
@@ -25,6 +27,15 @@ from app_logic import (
 
 
 ROOT = Path(__file__).resolve().parent
+
+
+class CostFunctionTests(unittest.TestCase):
+    def test_cost_formula_matches_confusion_matrix(self):
+        self.assertEqual(calculate_binary_cost(false_positives=3, false_negatives=7), 7 * 500 + 3 * 10)
+        self.assertEqual(calculate_binary_cost(false_positives=0, false_negatives=0), 0)
+
+    def test_cost_reduction_is_positive_when_model_outperforms_baseline(self):
+        self.assertAlmostEqual(calculate_cost_reduction(final_cost=13170, baseline_cost=187500), 0.92976, places=4)
 
 
 class BatchScoringTests(unittest.TestCase):

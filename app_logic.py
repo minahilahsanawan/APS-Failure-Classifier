@@ -76,6 +76,22 @@ def identify_metric_rows(metrics: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
     return final.iloc[0], baseline.iloc[0]
 
 
+def calculate_binary_cost(
+    *,
+    false_positives: int,
+    false_negatives: int,
+    false_positive_cost: int = FALSE_POSITIVE_COST,
+    false_negative_cost: int = FALSE_NEGATIVE_COST,
+) -> int:
+    return int(false_negative_cost) * int(false_negatives) + int(false_positive_cost) * int(false_positives)
+
+
+def calculate_cost_reduction(final_cost: float, baseline_cost: float) -> float:
+    if baseline_cost <= 0:
+        raise ValueError("Baseline cost must be positive to compute a cost reduction.")
+    return max(0.0, 1.0 - float(final_cost) / float(baseline_cost))
+
+
 def validate_metric_consistency(
     final: pd.Series,
     baseline: pd.Series,
@@ -84,7 +100,10 @@ def validate_metric_consistency(
 ) -> float:
     conflicts: list[str] = []
     for label, row in (("final", final), ("baseline", baseline)):
-        expected_cost = FALSE_NEGATIVE_COST * int(row["fn"]) + FALSE_POSITIVE_COST * int(row["fp"])
+        expected_cost = calculate_binary_cost(
+            false_positives=int(row["fp"]),
+            false_negatives=int(row["fn"]),
+        )
         if not math.isclose(float(row["cost"]), expected_cost, rel_tol=0, abs_tol=tolerance):
             conflicts.append(f"{label}.cost")
 
@@ -100,7 +119,7 @@ def validate_metric_consistency(
         conflicts.append("baseline.cost")
     if conflicts:
         raise ArtifactError("Conflicting metric fields: " + ", ".join(conflicts))
-    return 1.0 - float(final["cost"]) / float(baseline["cost"])
+    return calculate_cost_reduction(float(final["cost"]), float(baseline["cost"]))
 
 
 def validate_model_package(package: Any, metric_threshold: float) -> dict[str, Any]:

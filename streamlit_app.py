@@ -59,16 +59,30 @@ st.markdown(
 
 @st.cache_data
 def cached_metrics(path: Path) -> pd.DataFrame:
+    """Load and cache model performance metrics.
+    
+    Streamlit will call this function once and cache the result across reruns.
+    """
     return load_metrics(path)
 
 
 @st.cache_data
 def cached_feature_importance(path: Path) -> pd.DataFrame:
+    """Load and cache feature importance rankings.
+    
+    Streamlit will call this function once and cache the result across reruns.
+    """
     return load_feature_importance(path)
 
 
 @st.cache_resource
-def cached_model_package(path: Path):
+def cached_model_package(path: Path) -> dict:
+    """Load and cache the serialized ML model package.
+    
+    Uses @st.cache_resource (not @st.cache_data) because the model object
+    contains non-serializable components (sklearn Pipeline instances).
+    Streamlit will call this once per session and reuse across reruns.
+    """
     return joblib.load(path)
 
 

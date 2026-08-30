@@ -7,16 +7,16 @@
 <p>
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/scikit--learn-Extra%20Trees-F7931E?logo=scikitlearn&logoColor=white" alt="scikit-learn">
-  <img src="https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
-  <img src="https://img.shields.io/badge/Model-Extra%20Trees-00B894" alt="Model">
+  <img src="https://img.shields.io/badge/Streamlit-Cloud%20Ready-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
+  <img src="https://img.shields.io/badge/Model-Balanced%20Extra%20Trees-00B894" alt="Extra Trees">
   <img src="https://img.shields.io/badge/Tests-15%20Passing-2E8B57" alt="Tests">
 </p>
 
-A production-style machine-learning project for classifying whether a failed Scania truck requires APS-related inspection or whether the failure is caused by another subsystem.
+A production-style machine learning system for identifying whether a failed Scania truck is likely to require APS-related inspection or whether the fault belongs to another subsystem.
 
 [Live App](https://aps-failure-classifier.streamlit.app/) |
-[Project Demo](#project-overview) |
-[Run Locally](#run-the-project-locally)
+[Run Locally](#run-the-project-locally) |
+[Project Details](#project-overview)
 
 </div>
 
@@ -24,31 +24,28 @@ A production-style machine-learning project for classifying whether a failed Sca
 
 ## Project Overview
 
-This project focuses on a real-world industrial classification problem: deciding whether an already-failed truck is likely to have an Air Pressure System (APS) issue or a failure from another subsystem.
+This project addresses a real-world industrial classification problem in predictive maintenance. The task is to determine whether a truck failure is associated with the Air Pressure System (APS) or with some other subsystem.
 
-The business objective is not standard accuracy. In this setting, a false negative is far more costly than a false positive:
+The key challenge is not just classification accuracy, but asymmetric operational risk:
 
 - False negative (missed APS failure): 500 cost units
 - False positive (unnecessary APS inspection): 10 cost units
 
-Because of this cost asymmetry, the model is optimized around recall and operational cost, not just raw classification accuracy.
+This makes the problem a cost-sensitive classification task, where recall and total cost are more important than raw accuracy.
 
 ---
 
 ## Business Problem
 
-The project models a cost-sensitive diagnostic decision:
+Every record in the dataset represents a truck that has already failed. The objective is to identify whether the root cause is APS-related, because missing a true APS failure has a much larger operational consequence than performing an unnecessary APS inspection.
 
-- Positive class: APS-related failure
-- Negative class: failure caused by another system
-
-The key challenge is imbalance and asymmetric risk. Missing a true APS issue can lead to a much more serious operational issue than sending a non-APS case for a preventive check.
+This makes the model useful for industrial triage and maintenance prioritization rather than generic classification.
 
 ---
 
 ## Model Performance
 
-The trained model in this repository is evaluated using a held-out test set and the published asymmetric cost function.
+The final model is evaluated on a held-out test set using the published asymmetric cost function.
 
 | Metric | Result |
 |--------|--------|
@@ -59,65 +56,78 @@ The trained model in this repository is evaluated using a held-out test set and 
 | Cost reduction vs baseline | 93.0% |
 | Test rows | 16,000 |
 
-These metrics are intentionally framed around the operating objective: catch APS failures early while keeping unnecessary inspections under control.
+These results are meaningful because the model is optimized for the actual business objective: minimize missed APS failures while avoiding excessive unnecessary inspections.
 
-> Accuracy alone is not the right headline metric for this problem because the cost of a missed APS failure is substantially higher than the cost of a false alarm.
+> Raw accuracy is not the primary performance measure here because the cost of a missed APS failure is much higher than the cost of a false alarm.
 
 ---
 
-## Solution Architecture
+## System Design
 
-The project includes:
+This project combines data science, software engineering, and deployment-ready product thinking.
 
-- Data validation and schema checks
-- Missing-value handling
-- Cost-sensitive classification logic
-- Decision threshold optimization
-- Model packaging and validation
-- Streamlit inference app
-- CSV upload scoring workflow
-- Automated unit testing
+### Included components
 
-### Core components
+- Data validation and schema enforcement
+- Missing-value handling and missingness indicators
+- Cost-sensitive threshold optimization
+- Balanced Extra Trees model training
+- Serialized model packaging and integrity checks
+- Streamlit user interface for live inference
+- Batch CSV scoring workflow
+- Downloadable prediction output and input template
+- Automated testing for reliability
 
-- `app_logic.py`: model validation, CSV parsing, prediction logic, business-cost checks
-- `streamlit_app.py`: interactive web application
-- `aps_failure_eda_model.ipynb`: EDA and model development notebook
-- `outputs/`: trained model and evaluation artifacts
+### Core files
+
+- `app_logic.py`: validation, preprocessing, scoring, metric checks, model validation
+- `streamlit_app.py`: interactive Streamlit application
+- `aps_failure_eda_model.ipynb`: exploratory analysis and modeling notebook
 - `test_app_logic.py`: automated validation tests
+- `outputs/`: trained model and evaluation artifacts
 
 ---
 
-## Dataset and Modeling
+## Modeling Approach
 
-The project uses a Scania APS failure dataset with anonymized sensor features and a strongly imbalanced class distribution.
+The final pipeline uses:
 
-The final model is a class-balanced Extra Trees classifier with a validation-tuned threshold selected to minimize the cost-sensitive operating objective.
+- median imputation for numerical missing values
+- explicit missingness indicators
+- balanced class weighting
+- Extra Trees ensemble classifier
+- cost-aware threshold selection on validation data
 
-This is appropriate because:
-
-- the dataset is strongly imbalanced
-- the signal is non-linear
-- the cost function is asymmetric
-- feature importance and missingness patterns matter operationally
+This combination is appropriate because the dataset is imbalanced, contains meaningful missingness patterns, and requires a decision policy aligned with operational risk instead of standard accuracy.
 
 ---
 
-## Production Features
+## Key Features
 
-The project is designed as a polished, deployable ML system.
+### Production-ready validation
 
-### Included features
+- CSV upload detection and UTF-8 validation
+- required feature checks
+- duplicate header detection
+- non-numeric value detection
+- model artifact validation
+- strict output consistency checks
 
-- CSV upload and validation
-- Required feature schema enforcement
-- Non-numeric value detection
-- Missing-value handling
-- Model artifact validation
-- Prediction output generation
-- Downloadable empty template and predictions
-- Streamlit dashboard with metrics and charts
-- Automated error handling
+### Batch inference workflow
+
+- upload CSV with sensor features
+- automatic schema validation
+- prediction generation
+- preserved original row order
+- downloadable predictions file
+
+### Interactive dashboard
+
+- summary metrics
+- cost comparison chart
+- feature importance visualization
+- batch scoring view
+- user-friendly validation messages
 
 ---
 
@@ -185,17 +195,33 @@ APS-Failure-Classifier/
 
 ---
 
-## Deployment Notes
+## Deployment
 
-This repository is ready for a standard Streamlit deployment flow:
+This repository is suitable for a standard Streamlit deployment workflow:
 
 1. Push the project to GitHub
-2. Create a new Streamlit Cloud app
+2. Create a new Streamlit app
 3. Select the repository and branch
-4. Set the main file as `streamlit_app.py`
+4. Set the main file to `streamlit_app.py`
 5. Deploy
 
-The app is built to work as a simple Python + Streamlit project without custom server setup.
+The project is structured for simple hosting without custom backend configuration.
+
+---
+
+## Quality and Validation
+
+The repository includes automated checks for:
+
+- cost calculation correctness
+- confusion matrix consistency
+- data parsing edge cases
+- missing-value handling
+- schema validation
+- model artifact validation
+- Streamlit view rendering
+
+All core validation tests pass successfully.
 
 ---
 
@@ -205,13 +231,13 @@ This project demonstrates:
 
 - cost-sensitive machine learning
 - real-world predictive maintenance modeling
-- data validation and system reliability
-- interpretability with feature importance
+- robust validation and error handling
+- statistical reasoning under class imbalance
 - production-style deployment structure
-- strong project documentation and testing discipline
+- practical software engineering for data science
 
 ---
 
 ## License
 
-This project is intended for educational and portfolio use.
+This project is intended for educational, professional portfolio, and demonstration use.
